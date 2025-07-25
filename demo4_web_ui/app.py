@@ -39,6 +39,8 @@ if "docs" not in st.session_state:
     st.session_state.docs = {}
 if "demo_mode" not in st.session_state:
     st.session_state.demo_mode = True
+if "clear_counter" not in st.session_state:
+    st.session_state.clear_counter = 0
 
 # ---- Pre-canned demo answers (zero API cost) ----
 # Pre-canned demo answers indexed by position in examples list
@@ -374,6 +376,7 @@ else:
         [""] + t("examples"),
         index=0,
         placeholder=t("quick_placeholder"),
+        key=f"quick_select_{st.session_state.clear_counter}",
     )
     question = selected if selected else st.chat_input(t("chat_placeholder"))
 
@@ -414,4 +417,5 @@ else:
 
     if st.button(t("clear_chat")):
         st.session_state.messages = []
+        st.session_state.clear_counter += 1
         st.rerun()
