@@ -29,20 +29,27 @@ rag-project/
 
 ## Quick Start
 
-### 1. Install Dependencies
+### Option 1: Try the Live Demo (No Installation Required)
+
+Open **[https://rag-project-demo.streamlit.app](https://rag-project-demo.streamlit.app)** in your browser.  
+The demo runs in **Demo Mode** with pre-canned answers — no API key needed.
+
+### Option 2: Run Locally
+
+#### 1. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment
+#### 2. Configure Environment
 
 ```bash
 cp .env.example .env
 # Edit .env with your DeepSeek API key
 ```
 
-### 3. Run Demos
+#### 3. Run Demos
 
 ```bash
 # Demo 1: Vector-based legal Q&A
@@ -50,6 +57,25 @@ python demo1_vector_rag/rag_qa.py
 
 # Demo 2: Knowledge graph construction & hierarchy queries
 python demo2_knowledge_graph/knowledge_graph.py
+
+# Demo 3: Hybrid Agent
+python demo3_hybrid_agent/agent_graphrag.py
+
+# Demo 4: Streamlit Web UI
+streamlit run demo4_web_ui/app.py
+```
+
+### Option 3: Run with Docker
+
+```bash
+docker-compose up -d
+# Open http://localhost:8501
+```
+
+Pull the pre-built image:
+
+```bash
+docker pull ericality/rag-project:latest
 ```
 
 ## Core Concepts
