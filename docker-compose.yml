@@ -1,0 +1,18 @@
+services:
+  rag:
+    build: .
+    container_name: rag-project
+    environment:
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - DEEPSEEK_MODEL=${DEEPSEEK_MODEL:-deepseek-v4-flash}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-all-MiniLM-L6-v2}
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./chroma_db:/app/chroma_db
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command:
+      - python
+      - -c
+      - print('Available demos: python demo1_vector_rag/rag_qa.py | python demo2_knowledge_graph/knowledge_graph.py | python demo3_hybrid_agent/agent_graphrag.py')
