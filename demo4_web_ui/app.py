@@ -131,19 +131,6 @@ def load_agent(pdf_path, chroma_dir, cache_path, doc_label):
 
 # ---- Sidebar ----
 with st.sidebar:
-    # Language toggle
-    lang = st.radio(
-        t("lang_label"),
-        ["en", "cn"],
-        index=0 if st.session_state.lang == "en" else 1,
-        horizontal=True,
-        key="lang_radio",
-    )
-    if lang != st.session_state.lang:
-        st.session_state.lang = lang
-        st.rerun()
-
-    st.divider()
     st.header(t("doc_mgmt"))
 
     # Built-in document
@@ -196,6 +183,17 @@ with st.sidebar:
         st.metric(t("graph_nodes"), st.session_state.graph.number_of_nodes())
         st.metric(t("graph_edges"), st.session_state.graph.number_of_edges())
         st.caption(f"{t('current')}: {st.session_state.current_doc}")
+
+    st.divider()
+    lang = st.selectbox(
+        t("lang_label"), ["EN", "中文"], index=0 if st.session_state.lang == "en" else 1
+    )
+    if lang == "EN" and st.session_state.lang != "en":
+        st.session_state.lang = "en"
+        st.rerun()
+    elif lang == "中文" and st.session_state.lang != "cn":
+        st.session_state.lang = "cn"
+        st.rerun()
 
 # ---- Main area ----
 st.title(t("title"))
