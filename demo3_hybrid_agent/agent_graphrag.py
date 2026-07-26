@@ -52,9 +52,17 @@ LLM = ChatOpenAI(
 # ---- Vector Store (from Demo 1) ----
 
 
-def build_vector_store():
-    """Build or load the ChromaDB vector store."""
-    loader = PyPDFLoader(PDF_PATH)
+def build_vector_store(pdf_path=None, chroma_dir=None):
+    """Build or load the ChromaDB vector store.
+
+    Args:
+        pdf_path: Path to the PDF file. Defaults to PDF_PATH env var.
+        chroma_dir: Directory to persist ChromaDB. Defaults to CHROMA_DB_DIR env var.
+    """
+    pdf_path = pdf_path or PDF_PATH
+    chroma_dir = chroma_dir or CHROMA_DB_DIR
+
+    loader = PyPDFLoader(pdf_path)
     docs = loader.load()
 
     splitter = RecursiveCharacterTextSplitter(
@@ -64,13 +72,13 @@ def build_vector_store():
 
     embedding = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
 
-    if os.path.exists(CHROMA_DB_DIR):
+    if os.path.exists(chroma_dir):
         vectordb = Chroma(
-            persist_directory=CHROMA_DB_DIR, embedding_function=embedding
+            persist_directory=chroma_dir, embedding_function=embedding
         )
     else:
         vectordb = Chroma.from_documents(
-            documents=chunks, embedding=embedding, persist_directory=CHROMA_DB_DIR
+            documents=chunks, embedding=embedding, persist_directory=chroma_dir
         )
     return vectordb
 
@@ -78,14 +86,22 @@ def build_vector_store():
 # ---- Knowledge Graph (from Demo 2, with caching) ----
 
 
-def build_graph():
-    """Build the knowledge graph, caching triples to disk to avoid re-extraction."""
-    if GRAPH_CACHE.exists():
-        with open(GRAPH_CACHE) as f:
+def build_graph(pdf_path=None, cache_path=None):
+    """Build the knowledge graph, caching triples to disk to avoid re-extraction.
+
+    Args:
+        pdf_path: Path to the PDF file. Defaults to PDF_PATH env var.
+        cache_path: Path to the graph cache JSON. Defaults to GRAPH_CACHE.
+    """
+    pdf_path = pdf_path or PDF_PATH
+    cache = Path(cache_path) if cache_path else GRAPH_CACHE
+
+    if cache.exists():
+        with open(cache) as f:
             triples = [tuple(t) for t in json.load(f)]
         return build_knowledge_graph(triples)
 
-    loader = PyPDFLoader(PDF_PATH)
+    loader = PyPDFLoader(pdf_path)
     docs = loader.load()
 
     splitter = RecursiveCharacterTextSplitter(
@@ -102,8 +118,8 @@ def build_graph():
         all_triples.extend(extract_triples_from_chunk(text))
 
     unique = [list(t) for t in set(all_triples)]
-    GRAPH_CACHE.parent.mkdir(parents=True, exist_ok=True)
-    with open(GRAPH_CACHE, "w") as f:
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    with open(cache, "w") as f:
         json.dump(unique, f, ensure_ascii=False)
 
     return build_knowledge_graph(unique)

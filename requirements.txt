@@ -8,3 +8,5 @@ networkx
 pypdf
 python-dotenv
 streamlit
+sentence-transformers
+torchvision

@@ -21,3 +21,5 @@ Thumbs.db
 
 # IDE
 .vscode/
+demo3_hybrid_agent/graph_cache.json
+uploads/
