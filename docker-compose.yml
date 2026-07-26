@@ -11,6 +11,7 @@ services:
     volumes:
       - ./.env:/app/.env:ro
       - ./chroma_db:/app/chroma_db
+      - ./demo3_hybrid_agent/graph_cache.json:/app/demo3_hybrid_agent/graph_cache.json
       - ./data:/app/data:ro
     working_dir: /app
     ports:

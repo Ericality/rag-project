@@ -173,7 +173,14 @@ def build_hybrid_agent(vectordb, graph):
             "- If both tools return useful but different information, synthesize them.\n"
             "- If neither tool provides adequate information, honestly state that the answer "
             "cannot be found in the available legal text.\n\n"
-            "Answer concisely and professionally. Cite specific provisions when possible."
+            "RESPONSE FORMAT:\n"
+            "After your answer, include a 'References' section that quotes the relevant "
+            "original text passages returned by the tools. Use the format:\n"
+            "---\n"
+            "**References:**\n"
+            "[1] <original text excerpt>\n"
+            "[2] <original text excerpt>\n\n"
+            "Answer concisely and professionally."
         ),
     )
     return agent
