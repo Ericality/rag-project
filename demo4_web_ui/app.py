@@ -135,7 +135,6 @@ else:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Quick-select radio
     example_questions_cn = [
         "处理个人信息需要满足哪些原则？",
         "在什么情况下处理个人信息不需要取得个人同意？",
@@ -143,10 +142,11 @@ else:
         "个人信息处理者有哪些义务？",
         "未成年人个人信息保护有什么特别规定？",
     ]
-    selected = st.radio(
-        "快捷问题（点击即可发送）：",
+    selected = st.selectbox(
+        "快捷问题（选择后自动发送）：",
         [""] + example_questions_cn,
         index=0,
+        placeholder="点击选择一个问题，或直接在下方输入…",
     )
     question = None
     if selected:
