@@ -135,10 +135,10 @@ def build_hybrid_agent(vectordb, graph):
 
     def search_law(query: str) -> str:
         """
-        Search the Personal Information Protection Law using vector retrieval.
-        Use this tool when the user asks about what the law SAYS —
-        e.g., definitions, specific provisions, conditions, obligations.
-        Returns relevant text chunks ranked by semantic similarity.
+        Search the legal text using vector retrieval.
+        Use this tool for factual questions: definitions, provisions, conditions,
+        requirements, principles, and any question asking 'what does the law say about X'.
+        Returns the most semantically relevant text chunks.
         """
         docs = retriever.invoke(query)
         if not docs:
@@ -148,11 +148,10 @@ def build_hybrid_agent(vectordb, graph):
 
     def search_graph_tool(concept: str) -> str:
         """
-        Query the legal knowledge graph for concept relationships.
-        Use this tool when the user asks about how concepts RELATE —
-        e.g., hierarchies (subcategories, parent concepts), exceptions,
-        obligations ("what does X require?"), and prohibitions ("what is forbidden?").
-        Provide a single concept name as the query (e.g., "consent", "personal information").
+        Query the legal knowledge graph for structural relationships.
+        Use this tool for hierarchy queries: subcategories, parent concepts,
+        exceptions ('when is X NOT required?'), prohibitions, and obligations.
+        Provide a single concept name (e.g., 'consent', 'personal information').
         Returns structured parent/child relations and indirect links.
         """
         results = search_graph(graph, concept, direction="both", max_depth=3)
@@ -166,13 +165,15 @@ def build_hybrid_agent(vectordb, graph):
             "1. search_law — for finding WHAT the law says (definitions, provisions, conditions).\n"
             "2. search_graph_tool — for finding HOW concepts RELATE (hierarchies, exceptions, obligations).\n\n"
             "STRATEGY:\n"
-            "- For questions about specific provisions or definitions, use search_law first.\n"
-            "- For questions about concept relationships (subcategories, exceptions, what X requires), "
-            "use search_graph_tool first.\n"
+            "- For factual lookups (definitions, provisions, conditions), use search_law first.\n"
+            "- For structural queries (subcategories, exceptions, prohibitions), send the core\n"
+            "  concept name (e.g., 'personal information', 'consent') to search_graph_tool.\n"
+            "- If you are unsure which tool fits the question, try search_law first — it is more\n"
+            "  robust for ambiguous queries.\n"
             "- If the first tool's results are insufficient, try the other tool.\n"
             "- If both tools return useful but different information, synthesize them.\n"
-            "- If neither tool provides adequate information, honestly state that the answer "
-            "cannot be found in the available legal text.\n\n"
+            "- If neither tool provides adequate information, honestly state that the answer\n"
+            "  cannot be found in the available legal text.\n\n"
             "RESPONSE FORMAT:\n"
             "After your answer, include a 'References' section that quotes the relevant "
             "original text passages returned by the tools. Use the format:\n"
