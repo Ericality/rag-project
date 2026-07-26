@@ -131,6 +131,14 @@ def load_agent(pdf_path, chroma_dir, cache_path, doc_label):
 
 # ---- Sidebar ----
 with st.sidebar:
+    # System info
+    st.markdown("**🔍 Two Retrieval Tools**")
+    st.caption(
+        "📄 **search_law** — semantic search for provisions & definitions\n\n"
+        "🔗 **search_graph_tool** — knowledge graph for hierarchies & relations"
+    )
+    st.divider()
+
     st.header(t("doc_mgmt"))
 
     # Built-in document
@@ -145,8 +153,6 @@ with st.sidebar:
                 load_agent(builtin_pdf, builtin_chroma, builtin_cache, "Built-in")
             except Exception as e:
                 st.error(f"{t('load_failed')}: {e}")
-
-    st.divider()
 
     # Upload custom document
     st.subheader(t("upload"))
@@ -177,13 +183,13 @@ with st.sidebar:
                     st.error(f"{t('load_failed')}: {e}")
 
     # Status
-    st.divider()
     if st.session_state.agent_ready and st.session_state.graph:
         st.success(t("agent_ready"))
         st.metric(t("graph_nodes"), st.session_state.graph.number_of_nodes())
         st.metric(t("graph_edges"), st.session_state.graph.number_of_edges())
         st.caption(f"{t('current')}: {st.session_state.current_doc}")
 
+    # Language
     st.divider()
     lang = st.selectbox(
         t("lang_label"), ["EN", "中文"], index=0 if st.session_state.lang == "en" else 1
