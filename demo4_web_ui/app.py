@@ -135,16 +135,24 @@ else:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Quick-select buttons
-    st.caption("Quick questions:")
-    cols = st.columns(len(example_questions))
+    # Quick-select radio
+    example_questions_cn = [
+        "处理个人信息需要满足哪些原则？",
+        "在什么情况下处理个人信息不需要取得个人同意？",
+        "个人信息包含哪些子类别？",
+        "个人信息处理者有哪些义务？",
+        "未成年人个人信息保护有什么特别规定？",
+    ]
+    selected = st.radio(
+        "快捷问题（点击即可发送）：",
+        [""] + example_questions_cn,
+        index=0,
+    )
     question = None
-    for i, (col, q) in enumerate(zip(cols, example_questions)):
-        if col.button(f"{i+1}", key=f"qbtn_{i}", use_container_width=True, help=q):
-            question = q
-
-    if not question:
-        question = st.chat_input("Or type your own question here...")
+    if selected:
+        question = selected
+    else:
+        question = st.chat_input("或在下方输入你的问题…")
 
     if question:
         st.session_state.messages.append({"role": "user", "content": question})
