@@ -69,9 +69,9 @@ T = {
         "examples": [
             "What principles must be followed when processing personal information?",
             "Under what circumstances is consent NOT required?",
-            "What are the subcategories of personal information?",
-            "What obligations does a personal information processor have?",
-            "What special protections exist for minors' personal information?",
+            "What behaviors are prohibited for personal information processors?",
+            "What are the specific requirements for consent?",
+            "What are the lawful, legitimate, and necessary principles?",
         ],
     },
     "cn": {
@@ -100,11 +100,11 @@ T = {
         "reasoning": "Agent 推理中...",
         "clear_chat": "清空对话",
         "examples": [
-            "处理个人信息需要满足哪些原则？",
+            "处理个人信息需要遵循哪些原则？",
             "在什么情况下处理个人信息不需要取得个人同意？",
-            "个人信息包含哪些子类别？",
-            "个人信息处理者有哪些义务？",
-            "未成年人个人信息保护有什么特别规定？",
+            "个人信息处理者有哪些禁止行为？",
+            "同意有哪些具体要求？",
+            "什么是合法、正当、必要原则？",
         ],
     },
 }
