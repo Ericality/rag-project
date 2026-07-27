@@ -196,6 +196,16 @@ def load_agent(pdf_path, chroma_dir, cache_path, doc_label):
     st.session_state.current_doc = doc_label
 
 
+# ---- Demo mode auto-load ----
+if st.session_state.demo_mode and not st.session_state.agent_ready:
+    st.session_state.agent_ready = True
+    st.session_state.current_doc = "个人信息保护法（Demo）"
+    class MockGraph:
+        def number_of_nodes(self): return 84
+        def number_of_edges(self): return 71
+    st.session_state.graph = MockGraph()
+    st.session_state.agent = None  # not needed in demo mode
+
 # ---- Sidebar ----
 with st.sidebar:
     # Demo mode toggle
