@@ -18,7 +18,6 @@ sys.path.insert(0, str(PROJECT_ROOT / "demo2_knowledge_graph"))
 sys.path.insert(0, str(PROJECT_ROOT / "demo3_hybrid_agent"))
 
 import streamlit as st
-from agent_graphrag import build_vector_store, build_graph, build_hybrid_agent, query_agent
 
 # ---- Page config ----
 st.set_page_config(page_title="Law-RAG", page_icon="⚖️", layout="wide")
@@ -187,6 +186,7 @@ def t(key, **kwargs):
 
 # ---- Agent loader ----
 def load_agent(pdf_path, chroma_dir, cache_path, doc_label):
+    from agent_graphrag import build_vector_store, build_graph, build_hybrid_agent
     vectordb = build_vector_store(pdf_path=pdf_path, chroma_dir=chroma_dir)
     graph = build_graph(pdf_path=pdf_path, cache_path=cache_path)
     agent = build_hybrid_agent(vectordb, graph)
@@ -313,6 +313,7 @@ else:
         else:
             with st.chat_message("assistant"):
                 with st.spinner(t("reasoning")):
+                    from agent_graphrag import query_agent
                     answer = query_agent(st.session_state.agent, question)
                 st.markdown(answer)
             st.session_state.messages.append({"role": "assistant", "content": answer})
