@@ -9,6 +9,7 @@ services:
     volumes:
       - ./.env:/app/.env:ro
       - ./chroma_db:/app/chroma_db
+      - ./data:/app/data:ro
     working_dir: /app
     ports:
       - "8501:8501"
