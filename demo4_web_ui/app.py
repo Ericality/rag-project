@@ -38,6 +38,73 @@ if "current_doc" not in st.session_state:
     st.session_state.current_doc = None
 if "docs" not in st.session_state:
     st.session_state.docs = {}
+if "demo_mode" not in st.session_state:
+    st.session_state.demo_mode = True
+
+# ---- Pre-canned demo answers (zero API cost) ----
+DEMO_ANSWERS = {
+    "处理个人信息需要遵循哪些原则？": (
+        "根据《个人信息保护法》，处理个人信息应当遵循**合法、正当、必要和诚信**原则。"
+        "具体包括：\n\n"
+        "1. 具有明确、合理的目的；\n"
+        "2. 采取对个人权益影响最小的方式；\n"
+        "3. 在实现处理目的所必需的最小范围内收集；\n"
+        "4. 保证个人信息质量，避免因信息不准确、不完整对个人权益造成不利影响。\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] 处理个人信息应当遵循合法、正当、必要和诚信原则，不得通过误导、欺诈、胁迫等方式处理个人信息。\n"
+        "[2] 收集个人信息，应当限于实现处理目的的最小范围，不得过度收集个人信息。"
+    ),
+    "在什么情况下处理个人信息不需要取得个人同意？": (
+        "根据《个人信息保护法》，以下情形处理个人信息**不需要**取得个人同意：\n\n"
+        "1. 为订立、履行个人作为一方当事人的合同所必需；\n"
+        "2. 为履行法定职责或者法定义务所必需；\n"
+        "3. 为应对突发公共卫生事件所必需；\n"
+        "4. 为保护自然人的生命健康和财产安全所必需；\n"
+        "5. 为公共利益实施新闻报道、舆论监督等行为，在合理范围内处理个人信息；\n"
+        "6. 处理个人自行公开或已合法公开的个人信息；\n"
+        "7. 法律、行政法规规定的其他情形。\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] 为订立、履行个人作为一方当事人的合同所必需的处理个人信息，不需要取得个人同意。\n"
+        "[2] 为应对突发公共卫生事件所必需的处理个人信息，不需要取得个人同意。\n"
+        "[3] 为公共利益实施新闻报道、舆论监督等行为在合理范围内处理个人信息，不需要取得个人同意。"
+    ),
+    "个人信息处理者有哪些禁止行为？": (
+        "根据《个人信息保护法》，个人信息处理者**不得**有以下行为：\n\n"
+        "1. 通过误导、欺诈、胁迫等方式处理个人信息；\n"
+        "2. 过度收集个人信息；\n"
+        "3. 以个人不同意为由拒绝提供产品或服务（该信息为必需时除外）；\n"
+        "4. 以个人撤回同意为由拒绝提供服务。\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] 个人信息处理者不得通过误导、欺诈、胁迫等方式处理个人信息。\n"
+        "[2] 个人信息处理者不得过度收集个人信息。\n"
+        "[3] 个人信息处理者不得以个人不同意为由拒绝提供产品或服务。\n"
+        "[4] 个人信息处理者不得以个人撤回同意为由拒绝提供服务。"
+    ),
+    "同意有哪些具体要求？": (
+        "根据《个人信息保护法》，同意必须满足以下要求：\n\n"
+        "1. **自愿、明确作出** — 个人在充分知情的前提下自愿、明确作出；\n"
+        "2. **单独同意或书面同意** — 法律、行政法规规定应当取得个人单独同意或书面同意的，从其规定；\n"
+        "3. **事先充分告知** — 处理前应以显著方式、清晰易懂的语言告知处理目的、方式、种类、保存期限等。\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] 同意应当由个人在充分知情的前提下自愿、明确作出。\n"
+        "[2] 个人信息处理者在处理个人信息前，应当以显著方式、清晰易懂的语言真实、准确、完整地向个人告知。"
+    ),
+    "什么是合法、正当、必要原则？": (
+        "合法、正当、必要和诚信原则是《个人信息保护法》的核心原则：\n\n"
+        "1. **合法原则** — 遵守法律法规，不得通过误导、欺诈、胁迫等方式处理；\n"
+        "2. **正当原则** — 具有明确、合理的目的，与处理目的直接相关；\n"
+        "3. **必要原则** — 收集限于实现目的的最小范围，不得过度收集；\n"
+        "4. **诚信原则** — 诚实守信，不得滥用个人信息。\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] 处理个人信息应当遵循合法、正当、必要和诚信原则。\n"
+        "[2] 收集个人信息，应当限于实现处理目的的最小范围，不得过度收集。"
+    ),
+}
 
 # ---- i18n ----
 T = {
@@ -131,6 +198,11 @@ def load_agent(pdf_path, chroma_dir, cache_path, doc_label):
 
 # ---- Sidebar ----
 with st.sidebar:
+    # Demo mode toggle
+    st.toggle("🔒 Demo Mode", value=st.session_state.demo_mode, key="demo_toggle",
+              help="On: uses pre-canned answers (no API cost). Off: full LLM agent.")
+    st.session_state.demo_mode = st.session_state.demo_toggle
+
     # System info
     st.markdown("**🔍 Two Retrieval Tools**")
     st.caption(
@@ -227,11 +299,23 @@ else:
         st.session_state.messages.append({"role": "user", "content": question})
         with st.chat_message("user"):
             st.markdown(question)
-        with st.chat_message("assistant"):
-            with st.spinner(t("reasoning")):
-                answer = query_agent(st.session_state.agent, question)
-            st.markdown(answer)
-        st.session_state.messages.append({"role": "assistant", "content": answer})
+
+        # Demo mode: use pre-canned answer
+        if st.session_state.demo_mode:
+            answer = DEMO_ANSWERS.get(question)
+            if answer:
+                with st.chat_message("assistant"):
+                    st.markdown(answer)
+                st.session_state.messages.append({"role": "assistant", "content": answer})
+            else:
+                with st.chat_message("assistant"):
+                    st.markdown("⚠️ Demo 模式下仅支持选择预置问题，不支持自由输入。请从上方下拉框中选择一个问题。")
+        else:
+            with st.chat_message("assistant"):
+                with st.spinner(t("reasoning")):
+                    answer = query_agent(st.session_state.agent, question)
+                st.markdown(answer)
+            st.session_state.messages.append({"role": "assistant", "content": answer})
 
     if st.button(t("clear_chat")):
         st.session_state.messages = []
