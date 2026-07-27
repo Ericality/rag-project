@@ -106,6 +106,70 @@ DEMO_ANSWERS_CN = [
     ),
 ]
 
+# English answers for demo mode
+DEMO_ANSWERS_EN = [
+    (
+        "Under the Personal Information Protection Law, personal information processing must follow the principles of **lawfulness, legitimacy, necessity, and good faith**. Specifically:\n\n"
+        "1. Have a clear and reasonable purpose;\n"
+        "2. Adopt the method with the least impact on personal rights and interests;\n"
+        "3. Collect within the minimum scope necessary to achieve the processing purpose;\n"
+        "4. Ensure the quality of personal information, avoiding adverse effects on personal rights due to inaccurate or incomplete information.\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] Personal information processing shall follow the principles of lawfulness, legitimacy, necessity, and good faith; processing through misleading, fraudulent, coercive, or other improper means is prohibited.\n"
+        "[2] Collection of personal information shall be limited to the minimum scope necessary to achieve the processing purpose; excessive collection is prohibited."
+    ),
+    (
+        "Under the Personal Information Protection Law, consent is **NOT required** in the following circumstances:\n\n"
+        "1. Necessary for the conclusion or performance of a contract to which the individual is a party;\n"
+        "2. Necessary for the performance of statutory duties or obligations;\n"
+        "3. Necessary for responding to public health emergencies;\n"
+        "4. Necessary for protecting the life, health, or property safety of natural persons;\n"
+        "5. Processing personal information within a reasonable scope for news reporting or public opinion supervision in the public interest;\n"
+        "6. Processing personal information that the individual has disclosed themselves or that has been lawfully disclosed;\n"
+        "7. Other circumstances provided by laws and administrative regulations.\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] Processing personal information necessary for the conclusion or performance of a contract to which the individual is a party does not require consent.\n"
+        "[2] Processing personal information necessary for responding to public health emergencies does not require consent.\n"
+        "[3] Processing personal information within a reasonable scope for news reporting or public opinion supervision in the public interest does not require consent."
+    ),
+    (
+        "Under the Personal Information Protection Law, personal information processors **must NOT**:\n\n"
+        "1. Process personal information through misleading, fraudulent, or coercive means;\n"
+        "2. Excessively collect personal information;\n"
+        "3. Refuse to provide products or services on the grounds that the individual does not consent (unless such information is necessary);\n"
+        "4. Refuse to provide services on the grounds that the individual withdraws consent.\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] Personal information processors shall not process personal information through misleading, fraudulent, or coercive means.\n"
+        "[2] Personal information processors shall not excessively collect personal information.\n"
+        "[3] Personal information processors shall not refuse to provide products or services on the grounds that the individual does not consent.\n"
+        "[4] Personal information processors shall not refuse to provide services on the grounds that the individual withdraws consent."
+    ),
+    (
+        "Under the Personal Information Protection Law, consent must satisfy the following requirements:\n\n"
+        "1. **Voluntary and explicit** — given voluntarily and explicitly by the individual under the premise of full knowledge;\n"
+        "2. **Separate or written consent** — where laws and regulations require separate or written consent, such provisions shall prevail;\n"
+        "3. **Prior and full notification** — before processing, the individual shall be informed in a conspicuous manner and in clear, understandable language of the purpose, method, categories, retention period, etc.\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] Consent shall be given voluntarily and explicitly by the individual under the premise of full knowledge.\n"
+        "[2] Before processing personal information, personal information processors shall truthfully, accurately, and completely inform the individual in a conspicuous manner and in clear, understandable language."
+    ),
+    (
+        "The principles of lawfulness, legitimacy, necessity, and good faith are the core principles of the Personal Information Protection Law:\n\n"
+        "1. **Lawfulness** — comply with laws and regulations; processing through misleading, fraudulent, or coercive means is prohibited;\n"
+        "2. **Legitimacy** — have a clear and reasonable purpose directly related to the processing purpose;\n"
+        "3. **Necessity** — collection limited to the minimum scope; excessive collection is prohibited;\n"
+        "4. **Good Faith** — act with honesty and trustworthiness; personal information shall not be abused.\n\n"
+        "---\n"
+        "**References:**\n"
+        "[1] Personal information processing shall follow the principles of lawfulness, legitimacy, necessity, and good faith.\n"
+        "[2] Collection of personal information shall be limited to the minimum scope necessary to achieve the processing purpose; excessive collection is prohibited."
+    ),
+]
+
 # ---- i18n ----
 T = {
     "en": {
@@ -320,11 +384,11 @@ else:
 
         # Demo mode: use pre-canned answer
         if st.session_state.demo_mode:
-            # Match by index in examples list (works for both CN and EN)
+            # Match by index, pick CN or EN answers based on language
             examples = t("examples")
             try:
                 idx = examples.index(question)
-                answer = DEMO_ANSWERS_CN[idx]
+                answer = DEMO_ANSWERS_CN[idx] if st.session_state.lang == "cn" else DEMO_ANSWERS_EN[idx]
             except ValueError:
                 answer = None
 
