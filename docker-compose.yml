@@ -6,6 +6,8 @@ services:
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
       - DEEPSEEK_MODEL=${DEEPSEEK_MODEL:-deepseek-v4-flash}
       - EMBEDDING_MODEL=${EMBEDDING_MODEL:-all-MiniLM-L6-v2}
+      - PDF_PATH=./data/中华人民共和国个人信息保护法样例.pdf
+      - CHROMA_DB_DIR=./chroma_db
     volumes:
       - ./.env:/app/.env:ro
       - ./chroma_db:/app/chroma_db
