@@ -10,9 +10,6 @@ services:
       - ./.env:/app/.env:ro
       - ./chroma_db:/app/chroma_db
     working_dir: /app
-    stdin_open: true
-    tty: true
-    command:
-      - python
-      - -c
-      - print('Available demos: python demo1_vector_rag/rag_qa.py | python demo2_knowledge_graph/knowledge_graph.py | python demo3_hybrid_agent/agent_graphrag.py')
+    ports:
+      - "8501:8501"
+    command: streamlit run demo4_web_ui/app.py --server.address=0.0.0.0

@@ -25,4 +25,10 @@ jobs:
           pip install pytest
 
       - name: Run tests
+        env:
+          DEEPSEEK_API_KEY: "sk-ci-placeholder"
+          DEEPSEEK_API_BASE: "https://api.deepseek.com/v1"
+          DEEPSEEK_MODEL: "deepseek-v4-flash"
+          EMBEDDING_MODEL: "all-MiniLM-L6-v2"
+          PDF_PATH: "./data/中华人民共和国个人信息保护法样例.pdf"
         run: pytest tests/ -v

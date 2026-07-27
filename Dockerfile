@@ -14,8 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project code
 COPY . .
 
-# Expose port for Streamlit (future UI)
 EXPOSE 8501
 
-# Default command: show available demos
-CMD ["python", "-c", "print('Available demos: python demo1_vector_rag/rag_qa.py | python demo2_knowledge_graph/knowledge_graph.py | python demo3_hybrid_agent/agent_graphrag.py')"]
+# Launch Streamlit web UI
+CMD ["streamlit", "run", "demo4_web_ui/app.py", "--server.address=0.0.0.0"]
