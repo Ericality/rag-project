@@ -41,8 +41,9 @@ if "demo_mode" not in st.session_state:
     st.session_state.demo_mode = True
 
 # ---- Pre-canned demo answers (zero API cost) ----
-DEMO_ANSWERS = {
-    "处理个人信息需要遵循哪些原则？": (
+# Pre-canned demo answers indexed by position in examples list
+DEMO_ANSWERS_CN = [
+    (
         "根据《个人信息保护法》，处理个人信息应当遵循**合法、正当、必要和诚信**原则。"
         "具体包括：\n\n"
         "1. 具有明确、合理的目的；\n"
@@ -54,7 +55,7 @@ DEMO_ANSWERS = {
         "[1] 处理个人信息应当遵循合法、正当、必要和诚信原则，不得通过误导、欺诈、胁迫等方式处理个人信息。\n"
         "[2] 收集个人信息，应当限于实现处理目的的最小范围，不得过度收集个人信息。"
     ),
-    "在什么情况下处理个人信息不需要取得个人同意？": (
+    (
         "根据《个人信息保护法》，以下情形处理个人信息**不需要**取得个人同意：\n\n"
         "1. 为订立、履行个人作为一方当事人的合同所必需；\n"
         "2. 为履行法定职责或者法定义务所必需；\n"
@@ -69,7 +70,7 @@ DEMO_ANSWERS = {
         "[2] 为应对突发公共卫生事件所必需的处理个人信息，不需要取得个人同意。\n"
         "[3] 为公共利益实施新闻报道、舆论监督等行为在合理范围内处理个人信息，不需要取得个人同意。"
     ),
-    "个人信息处理者有哪些禁止行为？": (
+    (
         "根据《个人信息保护法》，个人信息处理者**不得**有以下行为：\n\n"
         "1. 通过误导、欺诈、胁迫等方式处理个人信息；\n"
         "2. 过度收集个人信息；\n"
@@ -82,7 +83,7 @@ DEMO_ANSWERS = {
         "[3] 个人信息处理者不得以个人不同意为由拒绝提供产品或服务。\n"
         "[4] 个人信息处理者不得以个人撤回同意为由拒绝提供服务。"
     ),
-    "同意有哪些具体要求？": (
+    (
         "根据《个人信息保护法》，同意必须满足以下要求：\n\n"
         "1. **自愿、明确作出** — 个人在充分知情的前提下自愿、明确作出；\n"
         "2. **单独同意或书面同意** — 法律、行政法规规定应当取得个人单独同意或书面同意的，从其规定；\n"
@@ -92,7 +93,7 @@ DEMO_ANSWERS = {
         "[1] 同意应当由个人在充分知情的前提下自愿、明确作出。\n"
         "[2] 个人信息处理者在处理个人信息前，应当以显著方式、清晰易懂的语言真实、准确、完整地向个人告知。"
     ),
-    "什么是合法、正当、必要原则？": (
+    (
         "合法、正当、必要和诚信原则是《个人信息保护法》的核心原则：\n\n"
         "1. **合法原则** — 遵守法律法规，不得通过误导、欺诈、胁迫等方式处理；\n"
         "2. **正当原则** — 具有明确、合理的目的，与处理目的直接相关；\n"
@@ -103,7 +104,7 @@ DEMO_ANSWERS = {
         "[1] 处理个人信息应当遵循合法、正当、必要和诚信原则。\n"
         "[2] 收集个人信息，应当限于实现处理目的的最小范围，不得过度收集。"
     ),
-}
+]
 
 # ---- i18n ----
 T = {
@@ -319,7 +320,14 @@ else:
 
         # Demo mode: use pre-canned answer
         if st.session_state.demo_mode:
-            answer = DEMO_ANSWERS.get(question)
+            # Match by index in examples list (works for both CN and EN)
+            examples = t("examples")
+            try:
+                idx = examples.index(question)
+                answer = DEMO_ANSWERS_CN[idx]
+            except ValueError:
+                answer = None
+
             if answer:
                 with st.chat_message("assistant"):
                     st.markdown(answer)
