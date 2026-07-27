@@ -200,7 +200,7 @@ def load_agent(pdf_path, chroma_dir, cache_path, doc_label):
 with st.sidebar:
     # Demo mode toggle
     st.toggle("🔒 Demo Mode", value=st.session_state.demo_mode, key="demo_toggle",
-              help="On: uses pre-canned answers (no API cost). Off: full LLM agent.")
+              help="On: uses pre-canned answers (no API cost). Off: full LLM agent (requires full dependencies).")
     st.session_state.demo_mode = st.session_state.demo_toggle
 
     # System info
@@ -211,48 +211,55 @@ with st.sidebar:
     )
     st.divider()
 
-    st.header(t("doc_mgmt"))
+    if not st.session_state.demo_mode:
+        st.header(t("doc_mgmt"))
 
-    # Built-in document
-    st.subheader(t("builtin"))
-    builtin_pdf = str(PROJECT_ROOT / "data" / "中华人民共和国个人信息保护法样例.pdf")
-    builtin_chroma = str(PROJECT_ROOT / "chroma_db")
-    builtin_cache = str(PROJECT_ROOT / "demo3_hybrid_agent" / "graph_cache.json")
+        # Built-in document
+        st.subheader(t("builtin"))
+        builtin_pdf = str(PROJECT_ROOT / "data" / "中华人民共和国个人信息保护法样例.pdf")
+        builtin_chroma = str(PROJECT_ROOT / "chroma_db")
+        builtin_cache = str(PROJECT_ROOT / "demo3_hybrid_agent" / "graph_cache.json")
 
-    if st.button(t("load_builtin"), use_container_width=True):
-        with st.spinner(t("building")):
-            try:
-                load_agent(builtin_pdf, builtin_chroma, builtin_cache, "Built-in")
-            except Exception as e:
-                st.error(f"{t('load_failed')}: {e}")
-
-    # Upload custom document
-    st.subheader(t("upload"))
-    uploaded_file = st.file_uploader(
-        t("upload_prompt"), type=["pdf"], help=t("upload_help")
-    )
-
-    if uploaded_file is not None:
-        doc_key = uploaded_file.name
-        if doc_key not in st.session_state.docs:
-            upload_dir = PROJECT_ROOT / "uploads"
-            upload_dir.mkdir(exist_ok=True)
-            saved_path = upload_dir / doc_key
-            with open(saved_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            st.session_state.docs[doc_key] = {
-                "path": str(saved_path),
-                "chroma": str(upload_dir / f"{doc_key}_chroma"),
-                "cache": str(upload_dir / f"{doc_key}_graph.json"),
-            }
-
-        if st.button(t("load_upload", name=doc_key), use_container_width=True):
-            info = st.session_state.docs[doc_key]
-            with st.spinner(t("building_for", name=doc_key)):
+        if st.button(t("load_builtin"), use_container_width=True):
+            with st.spinner(t("building")):
                 try:
-                    load_agent(info["path"], info["chroma"], info["cache"], doc_key)
+                    load_agent(builtin_pdf, builtin_chroma, builtin_cache, "Built-in")
+                except ImportError:
+                    st.error("完整依赖未安装。Demo 模式仅支持预置问答。"
+                             "如需使用完整 LLM Agent，请在本地的完整环境中运行。")
                 except Exception as e:
                     st.error(f"{t('load_failed')}: {e}")
+
+        # Upload custom document
+        st.subheader(t("upload"))
+        uploaded_file = st.file_uploader(
+            t("upload_prompt"), type=["pdf"], help=t("upload_help")
+        )
+
+        if uploaded_file is not None:
+            doc_key = uploaded_file.name
+            if doc_key not in st.session_state.docs:
+                upload_dir = PROJECT_ROOT / "uploads"
+                upload_dir.mkdir(exist_ok=True)
+                saved_path = upload_dir / doc_key
+                with open(saved_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                st.session_state.docs[doc_key] = {
+                    "path": str(saved_path),
+                    "chroma": str(upload_dir / f"{doc_key}_chroma"),
+                    "cache": str(upload_dir / f"{doc_key}_graph.json"),
+                }
+
+            if st.button(t("load_upload", name=doc_key), use_container_width=True):
+                info = st.session_state.docs[doc_key]
+                with st.spinner(t("building_for", name=doc_key)):
+                    try:
+                        load_agent(info["path"], info["chroma"], info["cache"], doc_key)
+                    except ImportError:
+                        st.error("完整依赖未安装。Demo 模式仅支持预置问答。"
+                                 "如需使用完整 LLM Agent，请在本地的完整环境中运行。")
+                    except Exception as e:
+                        st.error(f"{t('load_failed')}: {e}")
 
     # Status
     if st.session_state.agent_ready and st.session_state.graph:
@@ -312,8 +319,13 @@ else:
                     st.markdown("⚠️ Demo 模式下仅支持选择预置问题，不支持自由输入。请从上方下拉框中选择一个问题。")
         else:
             with st.chat_message("assistant"):
-                with st.spinner(t("reasoning")):
+                try:
                     from agent_graphrag import query_agent
+                except ImportError:
+                    st.error("完整依赖未安装（chromadb, sentence-transformers 等）。"
+                             "请回推 Demo Mode 开关使用预置问答，或在本地完整环境中运行。")
+                    st.stop()
+                with st.spinner(t("reasoning")):
                     answer = query_agent(st.session_state.agent, question)
                 st.markdown(answer)
             st.session_state.messages.append({"role": "assistant", "content": answer})
